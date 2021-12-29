@@ -18,18 +18,18 @@ std::vector<QVector3D> genTriangle() {
 	std::vector<QVector3D> data;
     data.reserve(12);
     data.emplace_back(QVector3D(-0.5, -0.5, 0.0));
-    data.emplace_back(QVector3D(1.0, 0.0, 0.0));
+    data.emplace_back(QVector3D(-2.0, -1.0, 0.0));
     data.emplace_back(QVector3D(-0.5, +0.5, 0.0));
-    data.emplace_back(QVector3D(+0.0, 1.0, 0.0));
+    data.emplace_back(QVector3D(-2.0, 1.0, 0.0));
     data.emplace_back(QVector3D(+0.5, -0.5, 0.0));
-    data.emplace_back(QVector3D(+0.0, +0.0, 1.0));
+    data.emplace_back(QVector3D(+1.0, -1.0, 1.0));
 
     data.emplace_back(QVector3D(+0.5, +0.5, 0.0));
-    data.emplace_back(QVector3D(1.0, 0.0, 0.0));
+    data.emplace_back(QVector3D(1.0, 1.0, 0.0));
     data.emplace_back(QVector3D(+0.5, -0.5, 0.0));
-    data.emplace_back(QVector3D(+0.0, 0.0, 1.0));
+    data.emplace_back(QVector3D(+1.0, -1.0, 1.0));
     data.emplace_back(QVector3D(-0.5, +0.5, 0.0));
-    data.emplace_back(QVector3D(+0.0, +1.0, 0.0));
+    data.emplace_back(QVector3D(-2.0, +1.0, 0.0));
 	std::cout << "num vertices: " << data.size() << std::endl;
 	return data;
 }

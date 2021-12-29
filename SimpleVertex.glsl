@@ -1,15 +1,13 @@
 #version 330 core
 layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 color;
+layout (location = 1) in vec3 complex_pos;
 
-out vec3 vColor;
-out vec3 vPosition;
+out vec3 cPosition;
 
 uniform vec3 offset;
 
 void main()
 {
-        vPosition = position + offset;
-        vColor = color;
-        gl_Position = vec4(vPosition,1.0);
+        cPosition = complex_pos;
+        gl_Position = vec4(position,1.0);
 }

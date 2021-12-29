@@ -1,8 +1,7 @@
 #version 330 core
 out vec4 pixColor;
 
-in vec3 vColor;
-in vec3 vPosition;
+in vec3 cPosition;
 
 uniform vec3 rhombusColor;
 uniform vec3 rhombusPosition;
@@ -20,6 +19,6 @@ int mandelbrot(vec2 c) {
 
 void main()
 {
-        float it = float(mandelbrot(vPosition.xy)) / 256;
+        float it = float(mandelbrot(cPosition.xy)) / 256.0;
         pixColor = vec4(it, it, it, 1.0);
 }
