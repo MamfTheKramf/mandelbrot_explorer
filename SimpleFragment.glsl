@@ -7,9 +7,19 @@ in vec3 vPosition;
 uniform vec3 rhombusColor;
 uniform vec3 rhombusPosition;
 
+int mandelbrot(vec2 c) {
+    int iteration = 0;
+    vec2 curr = vec2(0.0, 0.0);
+
+    while (length(curr) < 2.0 && iteration < 256) {
+        curr = vec2(curr.x * curr.x - curr.y * curr.y + c.x, 2 * curr.x * curr.y + c.y);
+        iteration++;
+    }
+    return iteration;
+}
+
 void main()
 {
-        if(  abs(vPosition.x - rhombusPosition.x)
-            +abs(vPosition.y - rhombusPosition.y) < 0.1) pixColor = vec4(rhombusColor, 1.0);
-        else pixColor = vec4(vColor, 1.0);
+        float it = float(mandelbrot(vPosition.xy)) / 256;
+        pixColor = vec4(it, it, it, 1.0);
 }
