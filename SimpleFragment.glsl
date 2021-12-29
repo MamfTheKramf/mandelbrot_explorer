@@ -19,6 +19,9 @@ int mandelbrot(vec2 c) {
 
 void main()
 {
-        float it = float(mandelbrot(cPosition.xy)) / 256.0;
-        pixColor = vec4(it, it, it, 1.0);
+        int it = mandelbrot(cPosition.xy);
+        float r = float(5 * it % 256) / 256.0;
+        float g = float(11 * it % 256) / 256.0;
+        float b = float(2 * it % 256) / 256.0;
+        pixColor = vec4(r, g, b, 1.0);
 }
