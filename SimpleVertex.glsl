@@ -4,7 +4,6 @@ layout (location = 1) in vec3 complex_pos;
 
 out vec3 cPosition;
 
-uniform vec3 offset;
 uniform mat4x4 scaling;
 
 void main()

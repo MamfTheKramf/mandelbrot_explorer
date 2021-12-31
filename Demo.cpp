@@ -93,18 +93,12 @@ void MyGLWidget::drawTriangles(GLuint vao, size_t size) {
     }
 
     QMatrix4x4 scalingMat{getScalingMatrix()};
-    scalingMat.rotate(45.0 * scaling, 0.0, 0.0, 1.0);
+    QMatrix4x4 translationMat{getTranslationMatrix()};
 
     glBindVertexArray(vao);
     {
-        //offset
-        simpleShader.setUniformValue("scaling", scalingMat);
-        simpleShader.setUniformValue("offset", QVector3D(0.0, 0.0, 0));
+        simpleShader.setUniformValue("scaling", translationMat * scalingMat);
         glDrawArrays(GL_TRIANGLES,0,(GLsizei)size);
-        //simpleShader.setUniformValue("offset", QVector3D(-0.5, -0.5, 0));
-        //glDrawArrays(GL_TRIANGLES,0,(GLsizei)size);
-        //simpleShader.setUniformValue("offset", QVector3D(+0.5, -0.5, 0));
-        //glDrawArrays(GL_TRIANGLES,0,(GLsizei)size);
     }
     glBindVertexArray(0);
 }
@@ -154,14 +148,46 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent*) {}
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
 	switch(event->key()) {
 	    case Qt::Key_Space: std::cout << "Space in GL widget" << std::endl; break;
-	    default: QWidget::keyPressEvent(event);
+        case Qt::Key_Up:
+            updateTranslation({0.0f, 0.05f * scaling, 0.0f});
+            break;
+        case Qt::Key_Down:
+            updateTranslation({0.0f, -0.05f * scaling, 0.0f});
+            break;
+        case Qt::Key_Left:
+            updateTranslation({-0.05f * scaling, 0.0f, 0.0f});
+            break;
+        case Qt::Key_Right:
+            updateTranslation({0.05f * scaling, 0.0f, 0.0f});
+            break;
+        case Qt::Key_N:
+            updateScaling(1.1f);
+            break;
+        case Qt::Key_M:
+            updateScaling(0.9f);
+            break;
+        default: QWidget::keyPressEvent(event);
 	}
     update();
+}
+
+void MyGLWidget::updateScaling(float change) {
+    scaling *= change;
+}
+
+void MyGLWidget::updateTranslation(QVector3D change) {
+    translation += change;
 }
 
 QMatrix4x4 MyGLWidget::getScalingMatrix() {
     QMatrix4x4 ret;
     ret.scale(scaling);
+    return ret;
+}
+
+QMatrix4x4 MyGLWidget::getTranslationMatrix() {
+    QMatrix4x4 ret;
+    ret.translate(translation);
     return ret;
 }
 

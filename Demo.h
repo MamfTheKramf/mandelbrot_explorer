@@ -7,6 +7,7 @@
 #include <QLocale>
 #include <QTimer>
 #include <QMatrix4x4>
+#include <QVector3D>
 
 #include <iostream>
 #include <array>
@@ -38,9 +39,9 @@ public:
 
     MyGLWidget(QWidget* parent) : QOpenGLWidget(parent) {
         setFocusPolicy(Qt::StrongFocus);
-        timer = new QTimer(this);
+        /*timer = new QTimer(this);
         connect(timer, &QTimer::timeout, this, &MyGLWidget::updateAnimation);
-        timer->start(20);
+        timer->start(20);*/
     }
 
 public slots:
@@ -65,15 +66,20 @@ private:
 	void mouseReleaseEvent(QMouseEvent*);
 	void keyPressEvent(QKeyEvent* event);
 
+    void updateScaling(float change);
+    void updateTranslation(QVector3D change);
+
     QMatrix4x4 getScalingMatrix();
+    QMatrix4x4 getTranslationMatrix();
 
 
     int mouseX,mouseY,button;
 
-    QTimer* timer{nullptr};
+    //QTimer* timer{nullptr};
     float scaling{1.0f};
     bool increasing{true};
 
+    QVector3D translation{0.0, 0.0, 0.0};
 	QOpenGLShaderProgram simpleShader;
 
 	GLuint vboTri, vaoTri;
