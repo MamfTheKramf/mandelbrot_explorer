@@ -5,6 +5,8 @@
 #include <QFrame>
 #include <QtCore>
 #include <QLocale>
+#include <QTimer>
+#include <QMatrix4x4>
 
 #include <iostream>
 #include <array>
@@ -34,7 +36,15 @@ class MyGLWidget : public QOpenGLWidget, public QOpenGLFunctions_3_3_Core {
 
 public:
 
-	MyGLWidget(QWidget* parent) : QOpenGLWidget(parent) {	setFocusPolicy(Qt::StrongFocus); }
+    MyGLWidget(QWidget* parent) : QOpenGLWidget(parent) {
+        setFocusPolicy(Qt::StrongFocus);
+        timer = new QTimer(this);
+        connect(timer, &QTimer::timeout, this, &MyGLWidget::updateAnimation);
+        timer->start(20);
+    }
+
+public slots:
+    void updateAnimation();
 
 private:
 
@@ -55,8 +65,14 @@ private:
 	void mouseReleaseEvent(QMouseEvent*);
 	void keyPressEvent(QKeyEvent* event);
 
+    QMatrix4x4 getScalingMatrix();
+
 
     int mouseX,mouseY,button;
+
+    QTimer* timer{nullptr};
+    float scaling{1.0f};
+    bool increasing{true};
 
 	QOpenGLShaderProgram simpleShader;
 

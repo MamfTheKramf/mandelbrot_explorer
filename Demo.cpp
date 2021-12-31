@@ -32,6 +32,20 @@ CGMainWindow::CGMainWindow (QWidget* parent) : QMainWindow (parent) {
 	setCentralWidget(f);
 }
 
+void MyGLWidget::updateAnimation() {
+    if (scaling >= 2.0) {
+        increasing = false;
+    } else if (scaling <= -2.0) {
+        increasing = true;
+    }
+    if (increasing) {
+        scaling += 0.01f;
+    } else {
+        scaling -= 0.01f;
+    }
+    update();
+}
+
 void MyGLWidget::initShader(QOpenGLShaderProgram& shader, std::string const& vertex, std::string const& fragment) {
 	setlocale(LC_NUMERIC,"C");
 	if (!shader.addShaderFromSourceFile(QOpenGLShader::Vertex,   vertex.c_str())) close();
@@ -77,9 +91,14 @@ void MyGLWidget::drawTriangles(GLuint vao, size_t size) {
         double y = 2.0 * (1.0 - (1.0 * mouseY  / height())) - 1.0;
         simpleShader.setUniformValue("rhombusPosition", QVector3D(x, y, 0));
     }
+
+    QMatrix4x4 scalingMat{getScalingMatrix()};
+    scalingMat.rotate(45.0 * scaling, 0.0, 0.0, 1.0);
+
     glBindVertexArray(vao);
     {
         //offset
+        simpleShader.setUniformValue("scaling", scalingMat);
         simpleShader.setUniformValue("offset", QVector3D(0.0, 0.0, 0));
         glDrawArrays(GL_TRIANGLES,0,(GLsizei)size);
         //simpleShader.setUniformValue("offset", QVector3D(-0.5, -0.5, 0));
@@ -137,7 +156,13 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
 	    case Qt::Key_Space: std::cout << "Space in GL widget" << std::endl; break;
 	    default: QWidget::keyPressEvent(event);
 	}
-	update();
+    update();
+}
+
+QMatrix4x4 MyGLWidget::getScalingMatrix() {
+    QMatrix4x4 ret;
+    ret.scale(scaling);
+    return ret;
 }
 
 int main (int argc, char **argv) {
