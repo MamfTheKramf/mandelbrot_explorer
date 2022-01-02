@@ -57,6 +57,7 @@ void MyGLWidget::initShader(QOpenGLShaderProgram& shader, std::string const& ver
 
 void MyGLWidget::initShaders() {
 	initShader(simpleShader, ":/SimpleVertex.glsl", ":/SimpleFragment.glsl");
+    initShader(juliaShader, ":/SimpleVertex.glsl", ":/JuliaFragment.glsl");
 }
 
 std::pair<GLuint,GLuint> MyGLWidget::makeVAOfromAttributes(std::vector<QVector3D> const& attributes) {
@@ -83,24 +84,34 @@ std::pair<GLuint,GLuint> MyGLWidget::makeVAOfromAttributes(std::vector<QVector3D
 
 void MyGLWidget::drawTriangles(GLuint vao, size_t size) {
 	if(size <= 0) return;
-	simpleShader.bind();
-    simpleShader.setUniformValue("rhombusColor", QVector3D(1.,1.,1.));
-    {
-        //rhombusPosition
-        double x = 2.0 * mouseX / width() - 1.0;
-        double y = 2.0 * (1.0 - (1.0 * mouseY  / height())) - 1.0;
-        simpleShader.setUniformValue("rhombusPosition", QVector3D(x, y, 0));
-    }
+    if (!drawJulia) {
+        simpleShader.bind();
+        simpleShader.setUniformValue("rhombusColor", QVector3D(1.,1.,1.));
+        {
+            //rhombusPosition
+            double x = 2.0 * mouseX / width() - 1.0;
+            double y = 2.0 * (1.0 - (1.0 * mouseY  / height())) - 1.0;
+            simpleShader.setUniformValue("rhombusPosition", QVector3D(x, y, 0));
+        }
 
-    QMatrix4x4 scalingMat{getScalingMatrix()};
-    QMatrix4x4 translationMat{getTranslationMatrix()};
+        QMatrix4x4 scalingMat{getScalingMatrix()};
+        QMatrix4x4 translationMat{getTranslationMatrix()};
 
-    glBindVertexArray(vao);
-    {
-        simpleShader.setUniformValue("scaling", translationMat * scalingMat);
-        glDrawArrays(GL_TRIANGLES,0,(GLsizei)size);
+        glBindVertexArray(vao);
+        {
+            simpleShader.setUniformValue("scaling", translationMat * scalingMat);
+            glDrawArrays(GL_TRIANGLES,0,(GLsizei)size);
+        }
+        glBindVertexArray(0);
+    } else {
+        juliaShader.bind();
+        juliaShader.setUniformValue("c", QVector3D(0.0, 0.8, 0.0));
+        QMatrix4x4 mat;
+        juliaShader.setUniformValue("scaling", mat);
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLES, 0, (GLsizei)size);
+        glBindVertexArray(0);
     }
-    glBindVertexArray(0);
 }
 
 void MyGLWidget::initializeGL() {
@@ -147,7 +158,9 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent*) {}
 
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
 	switch(event->key()) {
-	    case Qt::Key_Space: std::cout << "Space in GL widget" << std::endl; break;
+        case Qt::Key_Space:
+            drawJulia = !drawJulia;
+            break;
         case Qt::Key_Up:
             updateTranslation({0.0f, 0.05f * scaling, 0.0f});
             break;

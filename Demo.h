@@ -79,8 +79,11 @@ private:
     float scaling{1.0f};
     bool increasing{true};
 
+    bool drawJulia{false};
+
     QVector3D translation{0.0, 0.0, 0.0};
 	QOpenGLShaderProgram simpleShader;
+    QOpenGLShaderProgram juliaShader;
 
 	GLuint vboTri, vaoTri;
 };
