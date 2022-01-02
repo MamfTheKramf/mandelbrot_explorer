@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QMatrix4x4>
 #include <QVector3D>
+#include <QVector2D>
 
 #include <iostream>
 #include <array>
@@ -74,6 +75,7 @@ private:
 
 
     int mouseX,mouseY,button;
+    QVector2D pxToCompCoords(int x, int y);
 
     //QTimer* timer{nullptr};
     float mandelbrotScaling{1.0f};
@@ -82,6 +84,7 @@ private:
 
     float juliaScaling{1.0f};
     QVector3D juliaTranslation{0.5f, 0.0, 0.0};
+    QVector3D juliaC{0.0, 0.8, 0.0};
 
     bool drawJulia{false};
 

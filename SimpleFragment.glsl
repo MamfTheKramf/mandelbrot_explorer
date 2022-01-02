@@ -3,8 +3,8 @@ out vec4 pixColor;
 
 in vec3 cPosition;
 
-uniform vec3 rhombusColor;
 uniform vec3 rhombusPosition;
+uniform float scalar;
 
 int mandelbrot(vec2 c) {
     int iteration = 0;
@@ -19,6 +19,10 @@ int mandelbrot(vec2 c) {
 
 void main()
 {
+        if (abs(cPosition.x - rhombusPosition.x) * 2 + abs(cPosition.y - rhombusPosition.y) < 0.03 * scalar) {
+            pixColor = vec4(1.0, 1.0, 1.0, 1.0);
+            return;
+        }
         int it = mandelbrot(cPosition.xy);
         float r = float(1 * it % 256) / 256.0;
         float g = float(2 * it % 256) / 256.0;

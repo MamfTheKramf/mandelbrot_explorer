@@ -18,9 +18,12 @@
 #include "Demo.h"
 #include "Util.h"
 
+#define WIN_WIDTH 1080
+#define WIN_HEIGHT 720
+
 
 CGMainWindow::CGMainWindow (QWidget* parent) : QMainWindow (parent) {
-    resize(1080,720);
+    resize(WIN_WIDTH,WIN_HEIGHT);
 	QFrame* f = new QFrame (this);
 	f->setFrameStyle(QFrame::Sunken | QFrame::Panel);
 	f->setLineWidth(2);
@@ -92,14 +95,13 @@ void MyGLWidget::drawTriangles(GLuint vao, size_t size) {
         simpleShader.setUniformValue("rhombusColor", QVector3D(1.,1.,1.));
         {
             //rhombusPosition
-            double x = 2.0 * mouseX / width() - 1.0;
-            double y = 2.0 * (1.0 - (1.0 * mouseY  / height())) - 1.0;
-            simpleShader.setUniformValue("rhombusPosition", QVector3D(x, y, 0));
+            simpleShader.setUniformValue("rhombusPosition", QVector3D(juliaC.x(), juliaC.y(), 0));
+            simpleShader.setUniformValue("scalar", mandelbrotScaling);
         }
 
         glBindVertexArray(vao);
         {
-            simpleShader.setUniformValue("scaling", translationMat * scalingMat);
+            simpleShader.setUniformValue("trafo", translationMat * scalingMat);
             glDrawArrays(GL_TRIANGLES,0,(GLsizei)size);
         }
         glBindVertexArray(0);
@@ -109,8 +111,8 @@ void MyGLWidget::drawTriangles(GLuint vao, size_t size) {
         QMatrix4x4 translationMat{getTranslationMatrix(true)};
         juliaShader.bind();
         juliaShader.setUniformValue("drawingJulia", true);
-        juliaShader.setUniformValue("c", QVector3D(0.0, 0.8, 0.0));
-        juliaShader.setUniformValue("scaling", translationMat * scalingMat);
+        juliaShader.setUniformValue("c", juliaC);
+        juliaShader.setUniformValue("trafo", translationMat * scalingMat);
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, (GLsizei)size);
         glBindVertexArray(0);
@@ -154,6 +156,11 @@ void MyGLWidget::mousePressEvent(QMouseEvent *event) {
 	button = event->button();
 	mouseX = event->x();
 	mouseY = event->y();
+    QMatrix4x4 scalingMat{getScalingMatrix(false)};
+    QMatrix4x4 translationMat{getTranslationMatrix(false)};
+    QMatrix4x4 combined = translationMat * scalingMat;
+    QVector3D compCoords{pxToCompCoords(mouseX, mouseY)};
+    juliaC = combined * compCoords;
 	update();
 }
 
@@ -225,6 +232,12 @@ QMatrix4x4 MyGLWidget::getTranslationMatrix(bool forJulia) {
     QMatrix4x4 ret;
     ret.translate(translation);
     return ret;
+}
+
+QVector2D MyGLWidget::pxToCompCoords(int x, int y) {
+    float ret_x = -2.0 + 6.0 * static_cast<float>(x) / width();
+    float ret_y = 1.0 - 4.0 * (static_cast<float>(y) - height() / 4.0) / height();
+    return {ret_x, ret_y};
 }
 
 int main (int argc, char **argv) {

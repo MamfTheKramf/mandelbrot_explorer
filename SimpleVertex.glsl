@@ -4,12 +4,12 @@ layout (location = 1) in vec3 complex_pos;
 
 out vec3 cPosition;
 
-uniform mat4x4 scaling;
+uniform mat4x4 trafo;
 uniform bool drawingJulia;
 
 void main()
 {
-        cPosition = (scaling * vec4(complex_pos, 1.0)).xyz;
+        cPosition = (trafo * vec4(complex_pos, 1.0)).xyz;
         vec3 shift;
         if (drawingJulia) {
             shift = vec3(0.5, 0, 0);
