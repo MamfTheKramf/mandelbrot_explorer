@@ -76,12 +76,16 @@ private:
     int mouseX,mouseY,button;
 
     //QTimer* timer{nullptr};
-    float scaling{1.0f};
+    float mandelbrotScaling{1.0f};
+    QVector3D mandelbrotTranslation{0.0, 0.0, 0.0};
     bool increasing{true};
+
+    float juliaScaling{1.0f};
+    QVector3D juliaTranslation{0.5f, 0.0, 0.0};
 
     bool drawJulia{false};
 
-    QVector3D translation{0.0, 0.0, 0.0};
+
 	QOpenGLShaderProgram simpleShader;
     QOpenGLShaderProgram juliaShader;
 

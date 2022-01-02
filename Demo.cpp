@@ -33,15 +33,15 @@ CGMainWindow::CGMainWindow (QWidget* parent) : QMainWindow (parent) {
 }
 
 void MyGLWidget::updateAnimation() {
-    if (scaling >= 2.0) {
+    if (mandelbrotScaling >= 2.0) {
         increasing = false;
-    } else if (scaling <= -2.0) {
+    } else if (mandelbrotScaling <= -2.0) {
         increasing = true;
     }
     if (increasing) {
-        scaling += 0.01f;
+        mandelbrotScaling += 0.01f;
     } else {
-        scaling -= 0.01f;
+        mandelbrotScaling -= 0.01f;
     }
     update();
 }
@@ -84,6 +84,8 @@ std::pair<GLuint,GLuint> MyGLWidget::makeVAOfromAttributes(std::vector<QVector3D
 
 void MyGLWidget::drawTriangles(GLuint vao, size_t size) {
 	if(size <= 0) return;
+    QMatrix4x4 scalingMat{getScalingMatrix()};
+    QMatrix4x4 translationMat{getTranslationMatrix()};
     if (!drawJulia) {
         simpleShader.bind();
         simpleShader.setUniformValue("rhombusColor", QVector3D(1.,1.,1.));
@@ -94,9 +96,6 @@ void MyGLWidget::drawTriangles(GLuint vao, size_t size) {
             simpleShader.setUniformValue("rhombusPosition", QVector3D(x, y, 0));
         }
 
-        QMatrix4x4 scalingMat{getScalingMatrix()};
-        QMatrix4x4 translationMat{getTranslationMatrix()};
-
         glBindVertexArray(vao);
         {
             simpleShader.setUniformValue("scaling", translationMat * scalingMat);
@@ -106,8 +105,7 @@ void MyGLWidget::drawTriangles(GLuint vao, size_t size) {
     } else {
         juliaShader.bind();
         juliaShader.setUniformValue("c", QVector3D(0.0, 0.8, 0.0));
-        QMatrix4x4 mat;
-        juliaShader.setUniformValue("scaling", mat);
+        juliaShader.setUniformValue("scaling", translationMat * scalingMat);
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, (GLsizei)size);
         glBindVertexArray(0);
@@ -162,16 +160,16 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
             drawJulia = !drawJulia;
             break;
         case Qt::Key_Up:
-            updateTranslation({0.0f, 0.05f * scaling, 0.0f});
+            updateTranslation({0.0f, 0.05f, 0.0f});
             break;
         case Qt::Key_Down:
-            updateTranslation({0.0f, -0.05f * scaling, 0.0f});
+            updateTranslation({0.0f, -0.05f, 0.0f});
             break;
         case Qt::Key_Left:
-            updateTranslation({-0.05f * scaling, 0.0f, 0.0f});
+            updateTranslation({-0.05f, 0.0f, 0.0f});
             break;
         case Qt::Key_Right:
-            updateTranslation({0.05f * scaling, 0.0f, 0.0f});
+            updateTranslation({0.05f, 0.0f, 0.0f});
             break;
         case Qt::Key_N:
             updateScaling(1.1f);
@@ -185,20 +183,40 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
 }
 
 void MyGLWidget::updateScaling(float change) {
-    scaling *= change;
+    if (drawJulia) {
+        juliaScaling *= change;
+    } else {
+        mandelbrotScaling *= change;
+    }
 }
 
 void MyGLWidget::updateTranslation(QVector3D change) {
-    translation += change;
+    if (drawJulia) {
+        juliaTranslation += change * juliaScaling;
+    } else {
+        mandelbrotTranslation += change * mandelbrotScaling;
+    }
 }
 
 QMatrix4x4 MyGLWidget::getScalingMatrix() {
+    float scaling;
+    if (drawJulia) {
+        scaling = juliaScaling;
+    } else {
+        scaling = mandelbrotScaling;
+    }
     QMatrix4x4 ret;
     ret.scale(scaling);
     return ret;
 }
 
 QMatrix4x4 MyGLWidget::getTranslationMatrix() {
+    QVector3D translation;
+    if (drawJulia) {
+        translation = juliaTranslation;
+    } else {
+        translation = mandelbrotTranslation;
+    }
     QMatrix4x4 ret;
     ret.translate(translation);
     return ret;
