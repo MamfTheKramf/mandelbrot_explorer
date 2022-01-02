@@ -84,10 +84,11 @@ std::pair<GLuint,GLuint> MyGLWidget::makeVAOfromAttributes(std::vector<QVector3D
 
 void MyGLWidget::drawTriangles(GLuint vao, size_t size) {
 	if(size <= 0) return;
-    QMatrix4x4 scalingMat{getScalingMatrix()};
-    QMatrix4x4 translationMat{getTranslationMatrix()};
-    if (!drawJulia) {
+    { // draw mandelbrot
+        QMatrix4x4 scalingMat{getScalingMatrix(false)};
+        QMatrix4x4 translationMat{getTranslationMatrix(false)};
         simpleShader.bind();
+        simpleShader.setUniformValue("drawingJulia", false);
         simpleShader.setUniformValue("rhombusColor", QVector3D(1.,1.,1.));
         {
             //rhombusPosition
@@ -102,8 +103,12 @@ void MyGLWidget::drawTriangles(GLuint vao, size_t size) {
             glDrawArrays(GL_TRIANGLES,0,(GLsizei)size);
         }
         glBindVertexArray(0);
-    } else {
+    }
+    { // draw lulia
+        QMatrix4x4 scalingMat{getScalingMatrix(true)};
+        QMatrix4x4 translationMat{getTranslationMatrix(true)};
         juliaShader.bind();
+        juliaShader.setUniformValue("drawingJulia", true);
         juliaShader.setUniformValue("c", QVector3D(0.0, 0.8, 0.0));
         juliaShader.setUniformValue("scaling", translationMat * scalingMat);
         glBindVertexArray(vao);
@@ -198,9 +203,9 @@ void MyGLWidget::updateTranslation(QVector3D change) {
     }
 }
 
-QMatrix4x4 MyGLWidget::getScalingMatrix() {
+QMatrix4x4 MyGLWidget::getScalingMatrix(bool forJulia) {
     float scaling;
-    if (drawJulia) {
+    if (forJulia) {
         scaling = juliaScaling;
     } else {
         scaling = mandelbrotScaling;
@@ -210,9 +215,9 @@ QMatrix4x4 MyGLWidget::getScalingMatrix() {
     return ret;
 }
 
-QMatrix4x4 MyGLWidget::getTranslationMatrix() {
+QMatrix4x4 MyGLWidget::getTranslationMatrix(bool forJulia) {
     QVector3D translation;
-    if (drawJulia) {
+    if (forJulia) {
         translation = juliaTranslation;
     } else {
         translation = mandelbrotTranslation;

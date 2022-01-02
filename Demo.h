@@ -69,8 +69,8 @@ private:
     void updateScaling(float change);
     void updateTranslation(QVector3D change);
 
-    QMatrix4x4 getScalingMatrix();
-    QMatrix4x4 getTranslationMatrix();
+    QMatrix4x4 getScalingMatrix(bool forJulia);
+    QMatrix4x4 getTranslationMatrix(bool forJulia);
 
 
     int mouseX,mouseY,button;
