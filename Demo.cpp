@@ -20,7 +20,7 @@
 
 
 CGMainWindow::CGMainWindow (QWidget* parent) : QMainWindow (parent) {
-    resize(900,600);
+    resize(1080,720);
 	QFrame* f = new QFrame (this);
 	f->setFrameStyle(QFrame::Sunken | QFrame::Panel);
 	f->setLineWidth(2);

@@ -19,8 +19,8 @@ int julia(vec2 z0) {
 void main()
 {
         int it = julia(cPosition.xy);
-        float r = float(5 * it % 256) / 256.0;
-        float g = float(it) / 256.0;
-        float b = float(it) / 256.0;
+        float r = float(2 * it % 256) / 256.0;
+        float g = float(5 * it) / 256.0;
+        float b = float(5 * it) / 256.0;
         pixColor = vec4(r, g, b, 1.0);
 }
