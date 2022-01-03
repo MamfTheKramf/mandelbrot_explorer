@@ -140,7 +140,7 @@ void MyGLWidget::paintGL() {
 }
 
 void MyGLWidget::resizeGL(int width, int height) {
-	glViewport(0,0,width,height);
+    glViewport(0,0,width,height);
 	update();
 }
 
@@ -148,8 +148,9 @@ void MyGLWidget::wheelEvent(QWheelEvent*) {
 	update();
 }
 
-void MyGLWidget::mouseMoveEvent(QMouseEvent*) {
-	update();
+void MyGLWidget::mouseMoveEvent(QMouseEvent* event) {
+    mousePressEvent(event);
+    //update();
 }
 
 void MyGLWidget::mousePressEvent(QMouseEvent *event) {

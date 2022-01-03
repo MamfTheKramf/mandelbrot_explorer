@@ -5,11 +5,13 @@ in vec3 cPosition;
 
 uniform vec3 c;
 
+int total_iterations = 512;
+
 int julia(vec2 z0) {
     int iteration = 0;
     vec2 curr = z0;
 
-    while (length(curr) < 2.0 && iteration < 256) {
+    while (length(curr) < 2.0 && iteration < total_iterations) {
         curr = vec2(curr.x * curr.x - curr.y * curr.y + c.x, 2 * curr.x * curr.y + c.y);
         iteration++;
     }
@@ -19,8 +21,8 @@ int julia(vec2 z0) {
 void main()
 {
         int it = julia(cPosition.xy);
-        float r = float(2 * it % 256) / 256.0;
-        float g = float(5 * it) / 256.0;
-        float b = float(5 * it) / 256.0;
-        pixColor = vec4(r, g, b, 1.0);
+        float r = float(11 * it % total_iterations) / float(total_iterations);
+        float g = float(1 * it % total_iterations) / float(total_iterations);
+        float b = float(11 * it % total_iterations) / float(total_iterations);
+        pixColor = vec4(r, sqrt(g), sqrt(b), 1.0);
 }
