@@ -26,8 +26,8 @@ void main()
             return;
         }
         int it = mandelbrot(cPosition.xy);
-        float r = float(5 * it % total_iterations) / float(total_iterations);
-        float g = float(1 * it % total_iterations) / float(total_iterations);
-        float b = float(5 * it % total_iterations) / float(total_iterations);
-        pixColor = vec4(r, g, b, 1.0);
+        float r = float(1 * it % total_iterations) / float(total_iterations);
+        float g = float(5 * it % total_iterations) / float(total_iterations);
+        float b = float(2 * it % total_iterations) / float(total_iterations);
+        pixColor = vec4(r, (g + r) / 2.0, (b + g) / 2.0, 1.0);
 }
