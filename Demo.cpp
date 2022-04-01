@@ -27,12 +27,12 @@ CGMainWindow::CGMainWindow (QWidget* parent) : QMainWindow (parent) {
 	QFrame* f = new QFrame (this);
 	f->setFrameStyle(QFrame::Sunken | QFrame::Panel);
 	f->setLineWidth(2);
-	ogl = new MyGLWidget(f);
+    ogl = new MyGLWidget(f, this);
 	QHBoxLayout* layout = new QHBoxLayout();
 	layout->addWidget(ogl);
 	layout->setMargin(0);
 	f->setLayout(layout);
-	setCentralWidget(f);
+    setCentralWidget(f);
 }
 
 void MyGLWidget::updateAnimation() {
@@ -162,6 +162,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent *event) {
     QMatrix4x4 combined = translationMat * scalingMat;
     QVector3D compCoords{pxToCompCoords(mouseX, mouseY)};
     juliaC = combined * compCoords;
+    updateTitle();
 	update();
 }
 
@@ -192,7 +193,21 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
             break;
         default: QWidget::keyPressEvent(event);
 	}
+    updateTitle();
     update();
+}
+
+void MyGLWidget::updateTitle() {
+    QString title{ "Active side: " };
+    if (drawJulia) {
+        title += "Julia";
+    } else {
+        title += "Mandelbrot";
+    }
+
+    title += "    ";
+    title += QString::number(juliaC.x()) + " + " + QString::number(juliaC.y()) + "i";
+    mainWin->setWindowTitle(title);
 }
 
 void MyGLWidget::updateScaling(float change) {

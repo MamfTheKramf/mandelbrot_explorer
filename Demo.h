@@ -38,8 +38,9 @@ class MyGLWidget : public QOpenGLWidget, public QOpenGLFunctions_3_3_Core {
 
 public:
 
-    MyGLWidget(QWidget* parent) : QOpenGLWidget(parent) {
+    MyGLWidget(QWidget* parent, QMainWindow* window) : QOpenGLWidget(parent) {
         setFocusPolicy(Qt::StrongFocus);
+        mainWin = window;
         /*timer = new QTimer(this);
         connect(timer, &QTimer::timeout, this, &MyGLWidget::updateAnimation);
         timer->start(20);*/
@@ -66,6 +67,7 @@ private:
 	void mousePressEvent(QMouseEvent*);
 	void mouseReleaseEvent(QMouseEvent*);
 	void keyPressEvent(QKeyEvent* event);
+    void updateTitle();
 
     void updateScaling(float change);
     void updateTranslation(QVector3D change);
@@ -93,6 +95,8 @@ private:
     QOpenGLShaderProgram juliaShader;
 
 	GLuint vboTri, vaoTri;
+
+    QMainWindow* mainWin{ nullptr };
 };
 
 #endif
